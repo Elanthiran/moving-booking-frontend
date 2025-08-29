@@ -32,7 +32,7 @@ const AuthPage = ({ inlineMode = false, onClose }) => {
 
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:7000/api/auth/login", {
+      const res = await axios.post("https://movie-booking-backend-0oi9.onrender.com/api/auth/login", {
         email: loginEmail,
         password: loginPassword,
       });
@@ -61,7 +61,7 @@ const AuthPage = ({ inlineMode = false, onClose }) => {
     }
 
     try {
-      await axios.post("http://localhost:7000/api/auth/register", {
+      await axios.post("https://movie-booking-backend-0oi9.onrender.com/api/auth/register", {
         username,
         email: registerEmail,
         password: registerPassword,
