@@ -31,7 +31,7 @@ const App = () => {
 
   const fetchCustomerData = async () => {
     try {
-      const res = await axios.get("http://localhost:7000/api/customers/dataForGetting", {
+      const res = await axios.get(" https://movie-booking-backend-0oi9.onrender.com/api/customers/dataForGetting", {
         headers: { Authorization: `Bearer ${token}` },
       });
       dispatch(setData(res.data));
@@ -42,7 +42,7 @@ const App = () => {
 
   const fetchTheatres = async () => {
     try {
-      const res = await axios.get("http://localhost:7000/api/customers/theatres", {
+      const res = await axios.get("https://movie-booking-backend-0oi9.onrender.com/api/customers/theatres", {
         headers: { Authorization: `Bearer ${token}` },
       });
       dispatch(setTheatres(res.data));
