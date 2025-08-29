@@ -43,7 +43,7 @@ const PaymentPage = () => {
 
     try {
       await axios.post(
-        'http://localhost:7000/api/orders',
+        'https://movie-booking-backend-0oi9.onrender.com/api/orders',
         {
           showId,
           seats: selectedSeats,
