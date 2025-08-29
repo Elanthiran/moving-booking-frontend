@@ -106,7 +106,7 @@ const Movies = ({ fetchData }) => {
         .map((c) => ({ name: c.name, image: c.image }));
 
       const response = await axios.post(
-        'http://localhost:7000/api/customers/dataForPosting',
+        'https://movie-booking-backend-0oi9.onrender.com/api/customers/dataForPosting',
         {
           title: formData.title,
           genre: formData.genre,
