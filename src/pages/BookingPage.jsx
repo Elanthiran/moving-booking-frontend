@@ -3,7 +3,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setSelectedSeats } from "../Redux/slice/movieSlice";
-import "bootstrap/dist/css/bootstrap.min.css";
+
 
 const BookingPage = () => {
   const dispatch = useDispatch();
