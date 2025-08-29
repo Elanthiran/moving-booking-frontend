@@ -49,7 +49,7 @@ const AddShow = () => {
     
     try {
       
-      const res = await axios.get('http://localhost:7000/api/shows/getShow',{
+      const res = await axios.get('https://movie-booking-backend-0oi9.onrender.com/api/shows/getShow',{
         headers: { Authorization: `Bearer ${token}` }
       });
       dispatch(setShow(res.data));
@@ -76,7 +76,7 @@ const AddShow = () => {
     setError('');
 
     try {
-      await axios.post('http://localhost:7000/api/shows/postShow', {
+      await axios.post('https://movie-booking-backend-0oi9.onrender.com/api/shows/postShow', {
         title,     // movie ObjectId
         theatre,  // theatre ObjectId   
         date,
