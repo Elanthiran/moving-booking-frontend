@@ -52,7 +52,7 @@ const BookingPage = () => {
       setLoading(true);
       try {
         const res = await axios.get(
-          `http://localhost:7000/api/seats/${showId}`,
+          `https://movie-booking-backend-0oi9.onrender.com/api/seats/${showId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setSeatLayout(res.data.layout || []);
@@ -60,7 +60,7 @@ const BookingPage = () => {
       } catch {
         try {
           const createRes = await axios.post(
-            "http://localhost:7000/api/seats/createSeatLayout",
+            "https://movie-booking-backend-0oi9.onrender.com/api/seats/createSeatLayout",
             { showId },
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -101,7 +101,7 @@ const BookingPage = () => {
     setBooking(true);
     try {
       const res = await axios.post(
-        `http://localhost:7000/api/seats/book/${showId}`,
+        `https://movie-booking-backend-0oi9.onrender.com/api/seats/book/${showId}`,
         { selectedSeats },
         { headers: { Authorization: `Bearer ${token}` } }
       );
