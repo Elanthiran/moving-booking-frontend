@@ -12,7 +12,7 @@ const GoogleLoginButton = () => {
       if (!credentialResponse || !credentialResponse.credential) return;
 
       // Send Google ID token to backend
-      const res = await axios.post("http://localhost:7000/api/auth/google", {
+      const res = await axios.post("https://movie-booking-backend-0oi9.onrender.com/api/auth/google", {
         token: credentialResponse.credential,
       });
 
