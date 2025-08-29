@@ -13,7 +13,7 @@ const OrderDetails = () => {
 
     const fetchOrder = async () => {
       try {
-        const res = await axios.get(`http://localhost:7000/api/orders/${orderId}`, {
+        const res = await axios.get(`https://movie-booking-backend-0oi9.onrender.com/api/orders/${orderId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOrder(res.data);
