@@ -8,7 +8,7 @@ const OrderList = () => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const fetchOrders = async () => {
-      const res = await axios.get('http://localhost:7000/api/orders/my-orders', {
+      const res = await axios.get('https://movie-booking-backend-0oi9.onrender.com/api/orders/my-orders', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setOrders(res.data);
