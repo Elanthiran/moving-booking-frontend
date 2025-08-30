@@ -17,15 +17,17 @@ const Location = () => {
 
   // 🔑 Auth modal state
   const [showAuth, setShowAuth] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem('token')
+  );
 
   const {
-    cityList = [],
-    searchTerm = '',
-    filteredCities = [],
-    theatres = [],
-    error = '',
-    selectedCity = null,
+    cityList,
+    searchTerm,
+    filteredCities,
+    theatres,
+    error,
+    selectedCity,
   } = useSelector((state) => state.theatres);
 
   // On mount: fetch cities and restore city from localStorage
@@ -42,10 +44,12 @@ const Location = () => {
 
   // Filter cities on input change
   useEffect(() => {
-    const filtered = cityList.filter((city) =>
-      city.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    dispatch(setFilteredCities(filtered));
+    if (cityList?.length > 0) {
+      const filtered = cityList.filter((city) =>
+        city.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      dispatch(setFilteredCities(filtered));
+    }
   }, [searchTerm, cityList, dispatch]);
 
   const handleCityClick = (city) => {
@@ -105,7 +109,7 @@ const Location = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredCities.length > 0 ? (
+                {filteredCities?.length > 0 ? (
                   filteredCities.map((city) => (
                     <tr key={city._id}>
                       <td
