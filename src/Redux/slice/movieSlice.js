@@ -1,19 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const token = localStorage.getItem('token');
+
 const initialState = {
-  // Movies & shows
-  movies: [],
-  shows: [],
+  // Movie details
   selectedMovie: null,
 
   // City & theatre
   cityList: [],
   filteredCities: [],
-  searchTerm: "",
+  searchTerm: '',
   selectedCity: null,
   theatres: [],
-  error: "",
+  error: '',
 
   // Show selection
   selectedShowId: null,
@@ -60,7 +60,7 @@ const movieSlice = createSlice({
     setSearchTerm(state, action) {
       state.searchTerm = action.payload;
       const term = action.payload.toLowerCase();
-      state.filteredCities = (state.cityList || []).filter((city) =>
+      state.filteredCities = (state.cityList || []).filter(city =>
         city.name.toLowerCase().includes(term)
       );
     },
@@ -117,11 +117,11 @@ const movieSlice = createSlice({
       state.selectedSeats = action.payload;
 
       const ticketPrice = state.selectedShowId
-        ? state.show.find((show) => show._id === state.selectedShowId)?.price || 150
+        ? (state.show.find(show => show._id === state.selectedShowId)?.price || 150)
         : 150;
 
       const totalPrice = state.selectedSeats.length * ticketPrice;
-      const taxAmount = totalPrice * 0.18 + 30 * state.selectedSeats.length;
+      const taxAmount = (totalPrice * 0.18) + (30 * state.selectedSeats.length);
       const totalAmtWithTax = totalPrice + taxAmount;
 
       state.ticketPrice = ticketPrice;
@@ -145,18 +145,10 @@ const movieSlice = createSlice({
       state.error = action.payload;
     },
     clearError(state) {
-      state.error = "";
+      state.error = '';
     },
     setMessage(state, action) {
       state.message = action.payload;
-    },
-
-    // Movies & Shows
-    setMovies(state, action) {
-      state.movies = action.payload || [];
-    },
-    setShows(state, action) {
-      state.shows = action.payload || [];
     },
   },
 });
@@ -184,9 +176,7 @@ export const {
   setLoading,
   setError,
   clearError,
-  setMessage,
-  setMovies,
-  setShows,
+  setMessage
 } = movieSlice.actions;
 
 // Export reducer
@@ -199,14 +189,8 @@ export default movieSlice.reducer;
 export const fetchCities = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      dispatch(setError("You must be logged in to view cities"));
-      return;
-    }
-
     const response = await axios.get(
-      "https://movie-booking-backend-0oi9.onrender.com/api/customers/city",
+      'http://localhost:7000/api/customers/city',
       { headers: { Authorization: `Bearer ${token}` } }
     );
     const sorted = response.data.sort((a, b) => a.name.localeCompare(b.name));
@@ -214,8 +198,8 @@ export const fetchCities = () => async (dispatch) => {
     dispatch(setFilteredCities(sorted));
     dispatch(setError(""));
   } catch (err) {
-    console.error("Error fetching cities:", err);
-    dispatch(setError("Failed to fetch cities. Please login again."));
+    console.error('Error fetching cities:', err);
+    dispatch(setError('Failed to fetch cities'));
   } finally {
     dispatch(setLoading(false));
   }
@@ -224,56 +208,44 @@ export const fetchCities = () => async (dispatch) => {
 export const fetchTheatresByCity = (cityName) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      dispatch(setError("You must be logged in to view theatres"));
-      return;
-    }
-
     const res = await axios.get(
-      `https://movie-booking-backend-0oi9.onrender.com/api/customers/theatres?city=${cityName}`,
+      `http://localhost:7000/api/customers/theatres?city=${cityName}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     dispatch(setTheatres(res.data));
     dispatch(setError(""));
   } catch (err) {
-    console.error("Error fetching theatres:", err);
-    dispatch(setError("Failed to load theatres. Please login again."));
+    console.error('Error fetching theatres:', err);
+    dispatch(setError('Failed to load theatres'));
     dispatch(setTheatres([]));
   } finally {
     dispatch(setLoading(false));
   }
 };
 
-// ✅ New Thunk: Fetch Movies + Shows
-export const fetchMoviesAndShows = ({ city }) => async (dispatch) => {
+export const fetchShows = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      dispatch(setError("You must be logged in to view movies & shows"));
-      return;
-    }
-
-    const moviesRes = await axios.get(
-      `https://movie-booking-backend-0oi9.onrender.com/api/movies?city=${city}`,
+    const res = await axios.get(
+      "http://localhost:7000/api/shows/getShow",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    const showsRes = await axios.get(
-      "https://movie-booking-backend-0oi9.onrender.com/api/shows/getShow",
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    const now = new Date(); // current date & time
 
-    dispatch(setMovies(moviesRes.data || []));
-    dispatch(setShows(showsRes.data || []));
+    const validShows = (res.data || []).filter((s) => {
+      if (!s.theatre || !s.date || !s.time) return false;
+
+      const showDateTime = new Date(`${s.date}T${s.time}`);
+      return showDateTime >= now; // only future shows
+    });
+
+    dispatch(setShow(validShows));
     dispatch(setError(""));
   } catch (error) {
-    console.error("❌ Failed to fetch movies & shows:", error);
-    dispatch(setError("Failed to fetch movies & shows."));
-    dispatch(setMovies([]));
-    dispatch(setShows([]));
+    console.error("❌ Failed to fetch shows:", error);
+    dispatch(setError("Failed to fetch shows"));
   } finally {
     dispatch(setLoading(false));
   }
-};
+ };
