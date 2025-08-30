@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchCities,
@@ -10,9 +10,14 @@ import {
   setError,
 } from '../Redux/slice/movieSlice';
 import MoviesView from './MoviesView';
+import AuthPage from '../components/AuthPage';
 
 const Location = () => {
   const dispatch = useDispatch();
+
+  // 🔑 Auth modal state
+  const [showAuth, setShowAuth] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
   const {
     cityList = [],
@@ -44,6 +49,11 @@ const Location = () => {
   }, [searchTerm, cityList, dispatch]);
 
   const handleCityClick = (city) => {
+    if (!isAuthenticated) {
+      setShowAuth(true);
+      return;
+    }
+
     localStorage.setItem('selectedCity', JSON.stringify(city));
     dispatch(setSelectedCity(city));
     dispatch(setError(''));
@@ -58,12 +68,8 @@ const Location = () => {
     dispatch(setError(''));
   };
 
-  
-
   return (
     <div className="container my-4">
-      {/* <h3 className="mb-3">Select City</h3> */}
-
       {error && (
         <div className="alert alert-danger" role="alert">
           {error}
@@ -72,14 +78,22 @@ const Location = () => {
 
       {!selectedCity ? (
         <>
-          <div className="mb-3">
+          <div className="mb-3 d-flex justify-content-between align-items-center">
             <input
               type="text"
-              className="form-control"
+              className="form-control w-75"
               placeholder="Search cities..."
               value={searchTerm}
               onChange={(e) => dispatch(setSearchTerm(e.target.value))}
             />
+            {!isAuthenticated && (
+              <button
+                className="btn btn-outline-danger ms-2"
+                onClick={() => setShowAuth(true)}
+              >
+                Sign In
+              </button>
+            )}
           </div>
 
           <div className="table-responsive">
@@ -117,19 +131,27 @@ const Location = () => {
         </>
       ) : (
         <div className="mt-4">
-          {/* <h4>
-            Selected City: {selectedCity.name}, {selectedCity.state}
-          </h4> */}
           <h5>Theatres in {selectedCity.name}:</h5>
           <button className="btn btn-secondary my-3" onClick={handleChangeCity}>
             Change City
           </button>
-<MoviesView />
-          <div>
-            
-           
-            
-          </div>
+          <MoviesView />
+        </div>
+      )}
+
+      {/* 🔑 Auth Modal */}
+      {showAuth && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)', zIndex: 1000 }}
+        >
+          <AuthPage
+            inlineMode={true}
+            onClose={() => {
+              setShowAuth(false);
+              setIsAuthenticated(!!localStorage.getItem('token'));
+            }}
+          />
         </div>
       )}
     </div>
