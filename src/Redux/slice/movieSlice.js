@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const token = localStorage.getItem('token');
-
 const initialState = {
   // Movie details
   selectedMovie: null,
@@ -183,12 +181,18 @@ export const {
 export default movieSlice.reducer;
 
 //
-// 🔁 Async Thunks
+// 🔁 Async Thunks (always grab latest token)
 //
 
 export const fetchCities = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
+    const token = localStorage.getItem('token'); // ✅ get fresh token
+    if (!token) {
+      dispatch(setError("You must be logged in to view cities"));
+      return;
+    }
+
     const response = await axios.get(
       'https://movie-booking-backend-0oi9.onrender.com/api/customers/city',
       { headers: { Authorization: `Bearer ${token}` } }
@@ -199,7 +203,7 @@ export const fetchCities = () => async (dispatch) => {
     dispatch(setError(""));
   } catch (err) {
     console.error('Error fetching cities:', err);
-    dispatch(setError('Failed to fetch cities'));
+    dispatch(setError('Failed to fetch cities. Please login again.'));
   } finally {
     dispatch(setLoading(false));
   }
@@ -208,6 +212,12 @@ export const fetchCities = () => async (dispatch) => {
 export const fetchTheatresByCity = (cityName) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      dispatch(setError("You must be logged in to view theatres"));
+      return;
+    }
+
     const res = await axios.get(
       `https://movie-booking-backend-0oi9.onrender.com/api/customers/theatres?city=${cityName}`,
       { headers: { Authorization: `Bearer ${token}` } }
@@ -216,7 +226,7 @@ export const fetchTheatresByCity = (cityName) => async (dispatch) => {
     dispatch(setError(""));
   } catch (err) {
     console.error('Error fetching theatres:', err);
-    dispatch(setError('Failed to load theatres'));
+    dispatch(setError('Failed to load theatres. Please login again.'));
     dispatch(setTheatres([]));
   } finally {
     dispatch(setLoading(false));
@@ -226,26 +236,30 @@ export const fetchTheatresByCity = (cityName) => async (dispatch) => {
 export const fetchShows = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      dispatch(setError("You must be logged in to view shows"));
+      return;
+    }
+
     const res = await axios.get(
       "https://movie-booking-backend-0oi9.onrender.com/api/shows/getShow",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    const now = new Date(); // current date & time
-
+    const now = new Date();
     const validShows = (res.data || []).filter((s) => {
       if (!s.theatre || !s.date || !s.time) return false;
-
       const showDateTime = new Date(`${s.date}T${s.time}`);
-      return showDateTime >= now; // only future shows
+      return showDateTime >= now;
     });
 
     dispatch(setShow(validShows));
     dispatch(setError(""));
   } catch (error) {
     console.error("❌ Failed to fetch shows:", error);
-    dispatch(setError("Failed to fetch shows"));
+    dispatch(setError("Failed to fetch shows. Please login again."));
   } finally {
     dispatch(setLoading(false));
   }
- };
+};
