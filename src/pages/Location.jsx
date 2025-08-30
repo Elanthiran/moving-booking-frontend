@@ -37,7 +37,6 @@ const Location = () => {
     movies = [],
   } = useSelector((state) => state.theatres);
 
-  // On mount: fetch cities and shows
   useEffect(() => {
     dispatch(fetchCities());
     dispatch(fetchShows());
@@ -58,7 +57,6 @@ const Location = () => {
     dispatch(setFilteredCities(filtered));
   }, [searchTerm, cityList, dispatch]);
 
-  // Filter movies based on selected city shows
   const cityFilteredShows = selectedCity
     ? show.filter(
         (s) => s?.theatre?.name?.toLowerCase() === selectedCity.name?.toLowerCase()
@@ -101,30 +99,30 @@ const Location = () => {
 
   return (
     <div className="container my-4">
-      {/* Global Controls */}
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-      
-        <div className="d-flex flex-row gap-2 text-md-end">
+      {/* User Info & Auth Buttons */}
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4 flex-wrap">
+        <div className="d-flex flex-column flex-md-row gap-2 text-md-end">
           {username && <small className="text-muted">User: <span className="text-dark">{username}</span></small>}
           {role && <small className="text-muted">Role: <span className="text-dark">{role}</span></small>}
         </div>
-        {isAuthenticated ? (
-          <>
-            <button className="btn btn-outline-secondary" onClick={() => navigate("/orderlist")}>Orders</button>
-            <button className="btn btn-outline-secondary" onClick={handleLogout}>Logout</button>
-          </>
-        ) : (
-          <button className="btn btn-outline-danger" onClick={() => setShowAuth(true)}>Sign In</button>
-        )}
+        <div className="d-flex flex-wrap gap-2">
+          {isAuthenticated ? (
+            <>
+              <button className="btn btn-outline-secondary" onClick={() => navigate("/orderlist")}>Orders</button>
+              <button className="btn btn-outline-secondary" onClick={handleLogout}>Logout</button>
+            </>
+          ) : (
+            <button className="btn btn-outline-danger" onClick={() => setShowAuth(true)}>Sign In</button>
+          )}
+        </div>
       </div>
 
-   
-
-      {/* City Selection */}
+      {/* Error */}
       {error && <div className="alert alert-danger">{error}</div>}
 
       {!selectedCity ? (
         <>
+          {/* Search Input */}
           <div className="mb-3">
             <input
               type="text"
@@ -134,8 +132,10 @@ const Location = () => {
               onChange={(e) => dispatch(setSearchTerm(e.target.value))}
             />
           </div>
+
+          {/* City Table */}
           <div className="table-responsive">
-            <table className="table table-bordered table-striped">
+            <table className="table table-bordered table-striped table-hover">
               <thead className="table-dark">
                 <tr>
                   <th>City Name</th>
@@ -145,7 +145,7 @@ const Location = () => {
               <tbody>
                 {filteredCities.length > 0 ? (
                   filteredCities.map((city) => (
-                    <tr key={city._id}>
+                    <tr key={city._id} className="align-middle">
                       <td
                         role="button"
                         className="text-primary text-decoration-underline"
@@ -167,8 +167,10 @@ const Location = () => {
         </>
       ) : (
         <div className="mt-4">
-          <h5>Theatres in {selectedCity.name}:</h5>
-          <button className="btn btn-secondary my-3" onClick={handleChangeCity}>Change City</button>
+          <div className="d-flex justify-content-between align-items-center flex-wrap mb-3">
+            <h5 className="mb-2 mb-md-0">Theatres in {selectedCity.name}:</h5>
+            <button className="btn btn-secondary" onClick={handleChangeCity}>Change City</button>
+          </div>
           <MoviesView
             movies={moviesInCity}
             searchTerm={searchTerm}
@@ -181,8 +183,8 @@ const Location = () => {
       {/* Auth Modal */}
       {showAuth && (
         <div
-          className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
-          style={{ backgroundColor: "rgba(0,0,0,0.7)", zIndex: 1000 }}
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center p-3"
+          style={{ backgroundColor: "rgba(0,0,0,0.7)", zIndex: 1050 }}
         >
           <AuthPage
             inlineMode={true}
