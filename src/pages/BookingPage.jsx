@@ -158,7 +158,7 @@ const BookingPage = () => {
 
       <div
         ref={scrollRef}
-        className="seat-scroll d-flex flex-column align-items-start mb-4"
+        className="seat-scroll d-flex flex-column align-items-center mb-4"
         style={{ overflowX: "auto", width: "100%", whiteSpace: "nowrap" }}
       >
         {seatLayout.map((row) => (
