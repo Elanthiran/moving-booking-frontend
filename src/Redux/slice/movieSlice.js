@@ -190,7 +190,7 @@ export const fetchCities = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const response = await axios.get(
-      'http://localhost:7000/api/customers/city',
+      'https://movie-booking-backend-0oi9.onrender.com/api/customers/city',
       { headers: { Authorization: `Bearer ${token}` } }
     );
     const sorted = response.data.sort((a, b) => a.name.localeCompare(b.name));
@@ -209,7 +209,7 @@ export const fetchTheatresByCity = (cityName) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const res = await axios.get(
-      `http://localhost:7000/api/customers/theatres?city=${cityName}`,
+      `https://movie-booking-backend-0oi9.onrender.com/api/customers/theatres?city=${cityName}`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     dispatch(setTheatres(res.data));
@@ -227,7 +227,7 @@ export const fetchShows = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const res = await axios.get(
-      "http://localhost:7000/api/shows/getShow",
+      "https://movie-booking-backend-0oi9.onrender.com/api/shows/getShow",
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
